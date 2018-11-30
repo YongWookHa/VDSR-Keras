@@ -16,6 +16,7 @@ import numpy as np
 DATA_X_PATH = "./data/x/"
 DATA_Y_PATH = "./data/y/"
 TARGET_IMG_SIZE = (128, 128, 3)
+TRAIN_TEST_RATIO = (7, 3) # sum should be 10
 BATCH_SIZE = 64
 EPOCHS = 30
 
@@ -83,8 +84,9 @@ def SSIM(y_true, y_pred):
 
 # Get the training and testing data
 img_list = get_image_list(DATA_X_PATH)
-train_list = img_list[:130000]
-test_list = img_list[130000:]
+imgs_to_train = len(img_list) *  TRAIN_TEST_RATIO[0] // 10
+train_list = img_list[:imgs_to_train]
+test_list = img_list[imgs_to_train:]
 
 
 input_img = Input(shape=TARGET_IMG_SIZE)
