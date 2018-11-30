@@ -1,0 +1,1 @@
+The trained model and weights will be saved in this directory.
