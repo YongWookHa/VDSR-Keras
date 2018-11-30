@@ -13,23 +13,20 @@ import os, threading
 from scipy.misc import imread, imresize
 import numpy as np
 
-DATA_X_PATH = "./data/x_blur_3/"
-DATA_Y_PATH = "./data/128by128_/"
+DATA_X_PATH = "./data/x/"
+DATA_Y_PATH = "./data/y/"
 TARGET_IMG_SIZE = (128, 128, 3)
-BATCH_SIZE = 32
-EPOCHS = 29
-
+BATCH_SIZE = 64
+EPOCHS = 30
 
 def tf_log10(x):
 	numerator = tf.log(x)
 	denominator = tf.log(tf.constant(10, dtype=numerator.dtype))
 	return numerator / denominator
 
-
 def load_images(directory):
 	img = imread(directory)
 	img = np.array(img) / 127.5 - 1.
-
 	return img
 
 def get_image_list(data_path):
@@ -38,7 +35,6 @@ def get_image_list(data_path):
 	for f in l:
 		if f[-4:] == '.jpg':
 			train_list.append(f)
-
 	return train_list
 
 def get_image_batch(target_list, offset):
@@ -70,14 +66,12 @@ class threadsafe_iter:
 		with self.lock:
 			return self.it.next()
 
-
 def image_gen(target_list):
 	while True:
 		for step in range(len(target_list)//BATCH_SIZE):
 			offset = step*BATCH_SIZE
 			batch_x, batch_y = get_image_batch(target_list, offset)
 			yield (batch_x, batch_y)
-
 
 def PSNR(y_true, y_pred):
 	max_pixel = 1.0
@@ -143,7 +137,7 @@ output_img = add([res_img, input_img])
 
 model = Model(input_img, output_img)
 
-model.load_weights('./checkpoints/weights-improvement-71-24.53.hdf5')
+# model.load_weights('./checkpoints/weights-improvement-71-24.53.hdf5')
 
 adam = Adam(lr=0.00005)
 sgd = SGD(lr=1e-5, momentum=0.9, decay=1e-5, nesterov=False)
